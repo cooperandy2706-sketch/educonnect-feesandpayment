@@ -1,0 +1,2897 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduConnect - School Fees &amp; Payroll System</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #0f172a;
+      width: 100%;
+      height: 100%;
+      color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    .app-container {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Login Page */
+    .login-page {
+      width: 100%;
+      min-height: 100%;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f766e 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem;
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .login-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .login-container {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border-radius: 2rem;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+      max-width: 30rem;
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-header {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      padding: 3rem 2rem;
+      text-align: center;
+      color: white;
+    }
+
+    .login-logo {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .login-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .login-subtitle {
+      font-size: 1rem;
+      opacity: 0.95;
+    }
+
+    .login-body {
+      padding: 3rem 2rem;
+    }
+
+    .login-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      background: rgba(15, 23, 42, 0.5);
+      padding: 0.5rem;
+      border-radius: 1rem;
+    }
+
+    .login-tab {
+      flex: 1;
+      padding: 0.875rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      color: #94a3b8;
+      border-radius: 0.75rem;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .login-tab:hover {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .login-tab.active {
+      color: white;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .login-form-container {
+      display: none;
+    }
+
+    .login-form-container.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Landing Page */
+    .landing-page {
+      width: 100%;
+      min-height: 100%;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f766e 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 0;
+      overflow-y: auto;
+      position: relative;
+      display: none;
+    }
+
+    .landing-page::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: 
+        radial-gradient(circle at 20% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .landing-hero {
+      max-width: 85rem;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-content {
+      padding: 8rem 2rem 5rem;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #10b981;
+      padding: 0.5rem 1.5rem;
+      border-radius: 2rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2rem;
+    }
+
+    .hero-title {
+      font-size: 4.5rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffffff 0%, #d1fae5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+    }
+
+    .hero-subtitle {
+      font-size: 1.5rem;
+      font-weight: 400;
+      color: #94a3b8;
+      margin-bottom: 3rem;
+      line-height: 1.6;
+      max-width: 55rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 6rem;
+    }
+
+    .btn-hero-primary {
+      padding: 1.25rem 3rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      border: none;
+      border-radius: 0.75rem;
+      font-weight: 700;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-hero-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-hero-secondary {
+      padding: 1.25rem 3rem;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 0.75rem;
+      font-weight: 600;
+      font-size: 1.125rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-hero-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* Features Grid */
+    .features-section {
+      padding: 6rem 2rem;
+      background: rgba(15, 23, 42, 0.6);
+      width: 100%;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 4rem;
+    }
+
+    .section-title {
+      font-size: 3rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .section-description {
+      font-size: 1.125rem;
+      color: #94a3b8;
+      max-width: 45rem;
+      margin: 0 auto;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      gap: 2rem;
+      max-width: 75rem;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(20px);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: rgba(16, 185, 129, 0.5);
+      box-shadow: 0 20px 40px rgba(16, 185, 129, 0.2);
+    }
+
+    .feature-icon {
+      width: 4rem;
+      height: 4rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 1rem;
+    }
+
+    .feature-card p {
+      color: #94a3b8;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    /* Pricing Section */
+    .pricing-section {
+      padding: 6rem 2rem;
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 118, 110, 0.2) 100%);
+      width: 100%;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      gap: 2rem;
+      max-width: 60rem;
+      margin: 0 auto;
+    }
+
+    .pricing-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(15, 23, 42, 0.95) 100%);
+      border-radius: 2rem;
+      padding: 3rem;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      backdrop-filter: blur(20px);
+    }
+
+    .pricing-card:hover {
+      transform: scale(1.05);
+      border-color: rgba(16, 185, 129, 0.5);
+      box-shadow: 0 30px 60px rgba(16, 185, 129, 0.3);
+    }
+
+    .pricing-card.featured {
+      border-color: #10b981;
+      box-shadow: 0 20px 50px rgba(16, 185, 129, 0.4);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -1rem;
+      right: 2rem;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      color: #78350f;
+      padding: 0.5rem 1.5rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pricing-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #10b981;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .pricing-price {
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 0.5rem;
+    }
+
+    .pricing-period {
+      color: #64748b;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .pricing-save {
+      color: #10b981;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      font-size: 1rem;
+    }
+
+    .pricing-features {
+      list-style: none;
+      padding: 0;
+      margin: 2rem 0;
+    }
+
+    .pricing-features li {
+      padding: 0.75rem 0;
+      color: #cbd5e1;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .pricing-features li::before {
+      content: '✓';
+      color: #10b981;
+      font-weight: 700;
+      font-size: 1.25rem;
+    }
+
+    /* About Section */
+    .about-section {
+      padding: 6rem 2rem;
+      background: rgba(15, 23, 42, 0.9);
+      width: 100%;
+    }
+
+    .about-content {
+      max-width: 75rem;
+      margin: 0 auto;
+    }
+
+    .about-intro {
+      text-align: center;
+      font-size: 1.25rem;
+      color: #cbd5e1;
+      line-height: 1.8;
+      margin-bottom: 4rem;
+      max-width: 60rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .vision-mission-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+      gap: 2rem;
+      margin-bottom: 4rem;
+    }
+
+    .vm-card {
+      background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 78, 59, 0.1) 100%);
+      padding: 2.5rem;
+      border-radius: 1.5rem;
+      border: 2px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .vm-card h3 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #10b981;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .vm-card p {
+      color: #cbd5e1;
+      line-height: 1.7;
+      font-size: 1rem;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      gap: 1.5rem;
+      margin: 3rem 0;
+    }
+
+    .service-item {
+      background: rgba(30, 41, 59, 0.5);
+      padding: 1.5rem;
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .service-item h4 {
+      color: #10b981;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+
+    .service-item p {
+      color: #94a3b8;
+      font-size: 0.875rem;
+      line-height: 1.6;
+    }
+
+    .users-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .user-tag {
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: #10b981;
+      padding: 0.75rem 1.5rem;
+      border-radius: 2rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    .benefits-list {
+      color: #cbd5e1;
+      line-height: 2.5;
+      font-size: 1.125rem;
+      max-width: 50rem;
+      margin: 2rem auto;
+    }
+
+    .benefits-list div {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .benefits-list strong {
+      color: #10b981;
+    }
+
+    /* Main Dashboard */
+    .main-dashboard {
+      width: 100%;
+      height: 100%;
+      display: none;
+      flex-direction: column;
+      background: #0f172a;
+    }
+
+    /* Header */
+    .header {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: white;
+      padding: 1.5rem 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .header-content {
+      max-width: 80rem;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .header-icon {
+      width: 2.5rem;
+      height: 2.5rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+
+    .header-subtitle {
+      font-size: 0.875rem;
+      color: #94a3b8;
+      margin-top: 0.25rem;
+    }
+
+    .header-logout {
+      padding: 0.75rem 1.5rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #ef4444;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .header-logout:hover {
+      background: rgba(239, 68, 68, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      background: #0f172a;
+    }
+
+    .content-wrapper {
+      max-width: 80rem;
+      margin: 0 auto;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      background: rgba(30, 41, 59, 0.5);
+      padding: 0.5rem;
+      border-radius: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .tab {
+      padding: 1rem 1.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      color: #94a3b8;
+      border-radius: 0.75rem;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+    }
+
+    .tab:hover {
+      color: #10b981;
+      background: rgba(16, 185, 129, 0.1);
+    }
+
+    .tab.active {
+      color: white;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    /* Cards */
+    .card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border-radius: 1.5rem;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      margin-bottom: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.9) 100%);
+      border-radius: 1.25rem;
+      padding: 2rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(180deg, #10b981 0%, #059669 100%);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #94a3b8;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: white;
+    }
+
+    .stat-icon {
+      font-size: 2.5rem;
+      margin-bottom: 0.75rem;
+      opacity: 0.8;
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: white;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    }
+
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.8);
+      color: #cbd5e1;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(30, 41, 59, 1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-icon {
+      padding: 0.5rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+      font-size: 1.25rem;
+    }
+
+    .btn-icon:hover {
+      background: rgba(16, 185, 129, 0.2);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* Forms */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-label {
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+    }
+
+    .form-input,
+    .form-select {
+      padding: 0.875rem 1.25rem;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 0.75rem;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      color: white;
+    }
+
+    .form-input::placeholder {
+      color: #64748b;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      background: rgba(15, 23, 42, 1);
+    }
+
+    /* Table */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 1rem;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table thead {
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .table th {
+      padding: 1rem 1.25rem;
+      text-align: left;
+      font-weight: 600;
+      color: #10b981;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .table td {
+      padding: 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: #cbd5e1;
+    }
+
+    .table tbody tr {
+      transition: all 0.2s ease;
+    }
+
+    .table tbody tr:hover {
+      background: rgba(16, 185, 129, 0.05);
+    }
+
+    .status-badge {
+      padding: 0.375rem 0.875rem;
+      border-radius: 2rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-paid {
+      background: rgba(16, 185, 129, 0.2);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.4);
+    }
+
+    .status-owing {
+      background: rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, 0.4);
+    }
+
+    .status-sent {
+      background: rgba(37, 211, 102, 0.2);
+      color: #25D366;
+      border: 1px solid rgba(37, 211, 102, 0.4);
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      padding: 1rem;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border-radius: 1.5rem;
+      max-width: 50rem;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+    }
+
+    .close-btn {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 0.5rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-footer {
+      padding: 1.5rem 2rem;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* Receipt */
+    .receipt {
+      max-width: 48rem;
+      margin: 0 auto;
+      background: white;
+      padding: 3rem;
+      border: 2px solid #e5e7eb;
+      color: #1f2937;
+    }
+
+    .receipt-header {
+      text-align: center;
+      border-bottom: 3px solid #10b981;
+      padding-bottom: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .receipt-logo {
+      width: 4rem;
+      height: 4rem;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      border-radius: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      margin: 0 auto 1rem;
+    }
+
+    .receipt-school-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #1f2937;
+      margin-bottom: 0.5rem;
+    }
+
+    .receipt-school-info {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+
+    .receipt-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #10b981;
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .receipt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .receipt-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .receipt-label {
+      font-size: 0.75rem;
+      color: #6b7280;
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.25rem;
+    }
+
+    .receipt-value {
+      font-size: 1rem;
+      color: #1f2937;
+      font-weight: 600;
+    }
+
+    .receipt-amount-box {
+      background: #f9fafb;
+      padding: 1.5rem;
+      border-radius: 0.5rem;
+      margin-bottom: 2rem;
+      border: 2px dashed #e5e7eb;
+    }
+
+    .receipt-amount {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .receipt-amount-label {
+      font-size: 1.25rem;
+      color: #6b7280;
+      font-weight: 600;
+    }
+
+    .receipt-amount-value {
+      font-size: 2.5rem;
+      color: #10b981;
+      font-weight: 800;
+    }
+
+    .receipt-stamp {
+      text-align: center;
+      padding: 1rem;
+      background: linear-gradient(135deg, #d1fae5 0%, #ecfdf5 100%);
+      border: 2px dashed #10b981;
+      border-radius: 0.5rem;
+      font-weight: 700;
+      color: #047857;
+      margin: 2rem 0;
+    }
+
+    .receipt-footer {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 2px solid #e5e7eb;
+      color: #6b7280;
+      font-size: 0.875rem;
+    }
+
+    .whatsapp-preview {
+      background: rgba(37, 211, 102, 0.1);
+      border: 2px solid rgba(37, 211, 102, 0.3);
+      border-radius: 0.75rem;
+      padding: 1.5rem;
+      margin-top: 1rem;
+      font-family: monospace;
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: #cbd5e1;
+    }
+
+    .whatsapp-preview-title {
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #25D366;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      color: #64748b;
+    }
+
+    .empty-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #94a3b8;
+      margin-bottom: 0.5rem;
+    }
+
+    .loading-spinner {
+      display: inline-block;
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 3px solid rgba(255, 255, 255, 0.2);
+      border-top-color: #10b981;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);
+      border-radius: 0.75rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 2000;
+      animation: slideIn 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(20px);
+    }
+
+    .toast.active {
+      display: flex;
+    }
+
+    .toast.success {
+      border-left: 4px solid #10b981;
+    }
+
+    .toast.error {
+      border-left: 4px solid #ef4444;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+      }
+      to {
+        transform: translateX(0);
+      }
+    }
+
+    .receipt-duplicate-container {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+    }
+
+    .receipt-copy-label {
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #6b7280;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 0.5rem;
+      background: #f3f4f6;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .receipt-divider {
+      border-top: 3px dashed #d1d5db;
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .receipt-divider::after {
+      content: '✂️ CUT HERE ✂️';
+      position: absolute;
+      top: -0.75rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      padding: 0 1rem;
+      font-size: 0.875rem;
+      color: #9ca3af;
+      font-weight: 600;
+    }
+
+    .receipt-stamp-confirmed {
+      position: relative;
+      text-align: center;
+      padding: 1rem;
+      margin: 2rem 0;
+    }
+
+    .stamp-image {
+      width: 12rem;
+      height: 12rem;
+      margin: 0 auto;
+      position: relative;
+      transform: rotate(-15deg);
+    }
+
+    .stamp-circle {
+      width: 100%;
+      height: 100%;
+      border: 6px solid #10b981;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%);
+      position: relative;
+    }
+
+    .stamp-text {
+      text-align: center;
+      color: #10b981;
+      font-weight: 900;
+      font-size: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      line-height: 1.3;
+    }
+
+    .stamp-date {
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-top: 0.25rem;
+    }
+
+    @media print {
+      @page {
+        size: A4;
+        margin: 1.5cm;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+      }
+      
+      body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .login-page,
+      .landing-page,
+      .main-dashboard,
+      .header,
+      .tabs,
+      .toast {
+        display: none !important;
+      }
+      
+      #receiptModal {
+        display: block !important;
+        position: static !important;
+        background: white !important;
+        backdrop-filter: none !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      
+      .modal-content {
+        position: static !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        max-height: 100% !important;
+        box-shadow: none !important;
+        border: none !important;
+        background: white !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+      
+      .modal-header,
+      .modal-footer {
+        display: none !important;
+      }
+      
+      .modal-body {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      
+      .receipt-duplicate-container {
+        display: block !important;
+        width: 100% !important;
+        page-break-after: avoid !important;
+      }
+
+      .receipt-copy-wrapper {
+        page-break-inside: avoid !important;
+        margin-bottom: 2rem !important;
+      }
+      
+      .receipt {
+        border: 2px solid #e5e7eb !important;
+        background: white !important;
+        color: #1f2937 !important;
+        page-break-inside: avoid !important;
+        padding: 2rem !important;
+        margin: 0 !important;
+      }
+      
+      .receipt-divider {
+        border-top: 3px dashed #d1d5db !important;
+        margin: 2rem 0 !important;
+        page-break-inside: avoid !important;
+        position: relative;
+      }
+
+      .receipt-divider::after {
+        content: '✂️ CUT HERE ✂️' !important;
+        position: absolute;
+        top: -0.75rem;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white !important;
+        padding: 0 1rem;
+        font-size: 0.875rem;
+        color: #9ca3af !important;
+        font-weight: 600;
+      }
+      
+      .receipt-copy-label {
+        background: #f3f4f6 !important;
+        color: #6b7280 !important;
+        padding: 0.5rem !important;
+        margin-bottom: 1rem !important;
+        border-radius: 0.5rem !important;
+      }
+      
+      .receipt-logo {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+        color: white !important;
+      }
+      
+      .receipt-title {
+        color: #10b981 !important;
+      }
+      
+      .receipt-amount-box {
+        background: #f9fafb !important;
+        border: 2px dashed #e5e7eb !important;
+      }
+      
+      .receipt-amount-value {
+        color: #10b981 !important;
+      }
+      
+      .stamp-circle {
+        border: 6px solid #10b981 !important;
+        background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.05) 100%) !important;
+      }
+
+      .stamp-text {
+        color: #10b981 !important;
+      }
+      
+      .whatsapp-preview {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+
+      .main-content {
+        padding: 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .tabs {
+        flex-direction: column;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .receipt {
+        padding: 1.5rem;
+      }
+
+      .receipt-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="app-container" id="app"><!-- Login/Register Page -->
+   <div class="login-page" id="loginPage">
+    <div class="login-container">
+     <div class="login-header">
+      <div class="login-logo">
+       🏫
+      </div>
+      <h1 class="login-title">EduConnect</h1>
+      <p class="login-subtitle">School Management System</p>
+     </div>
+     <div class="login-body">
+      <div class="login-tabs"><button class="login-tab active" onclick="switchLoginTab('login')">Login</button> <button class="login-tab" onclick="switchLoginTab('register')">Create Account</button>
+      </div><!-- Login Form -->
+      <div class="login-form-container active" id="loginForm">
+       <form onsubmit="handleLogin(event)">
+        <div class="form-group" style="margin-bottom: 1.5rem;"><label class="form-label" for="loginUsername">Username</label> <input type="text" id="loginUsername" class="form-input" placeholder="Enter your username" required>
+        </div>
+        <div class="form-group" style="margin-bottom: 2rem;"><label class="form-label" for="loginPassword">Password</label> <input type="password" id="loginPassword" class="form-input" placeholder="Enter your password" required>
+        </div><button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%; justify-content: center;"> 🔐 Login to Dashboard </button>
+       </form>
+      </div><!-- Register Form -->
+      <div class="login-form-container" id="registerForm">
+       <form onsubmit="handleRegister(event)">
+        <div class="form-grid" style="margin-bottom: 1.5rem;">
+         <div class="form-group"><label class="form-label" for="regSchoolName">School Name *</label> <input type="text" id="regSchoolName" class="form-input" placeholder="Your school name" required>
+         </div>
+         <div class="form-group"><label class="form-label" for="regSchoolPhone">School Phone *</label> <input type="tel" id="regSchoolPhone" class="form-input" placeholder="+233 XX XXX XXXX" required>
+         </div>
+         <div class="form-group"><label class="form-label" for="regLocation">Location/Town *</label> <input type="text" id="regLocation" class="form-input" placeholder="e.g., Accra, Kumasi" required>
+         </div>
+         <div class="form-group"><label class="form-label" for="regEmail">Email (Optional)</label> <input type="email" id="regEmail" class="form-input" placeholder="school@example.com">
+         </div>
+         <div class="form-group"><label class="form-label" for="regUsername">Username *</label> <input type="text" id="regUsername" class="form-input" placeholder="Choose a username" required>
+         </div>
+         <div class="form-group"><label class="form-label" for="regPassword">Password *</label> <input type="password" id="regPassword" class="form-input" placeholder="Choose a password" required>
+         </div>
+        </div>
+        <div style="background:rgba(239, 68, 68, 0.1);border:2px solid rgba(239, 68, 68, 0.4);border-radius:1rem;padding:1.5rem;margin-bottom:1.5rem;">
+         <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1rem;">
+          <div style="font-size:1.5rem;">
+           🔒
+          </div>
+          <div style="font-weight:700;color:#ef4444;font-size:1.125rem;">
+           WhatsApp Feature - Payment Required
+          </div>
+         </div>
+         <p style="color:#cbd5e1;font-size:0.875rem;margin-bottom:1rem;line-height:1.6;">The WhatsApp messaging feature requires payment. Enter your access code below if you've already paid.</p>
+         <div class="form-group"><label class="form-label" for="regAccessCode">Access Code (Leave empty for free version)</label> <input type="text" id="regAccessCode" class="form-input" placeholder="Enter access code">
+         </div>
+         <div style="font-size:0.75rem;color:#94a3b8;margin-top:0.5rem;">
+          💡 Contact support to purchase WhatsApp access: <strong>cooper1721</strong>
+         </div>
+        </div><button type="submit" class="btn btn-success" id="registerBtn" style="width: 100%; justify-content: center;"> ✨ Create Account &amp; Start </button>
+       </form>
+      </div>
+     </div>
+    </div>
+   </div><!-- Main Dashboard -->
+   <div class="main-dashboard" id="mainDashboard">
+    <header class="header">
+     <div class="header-content">
+      <div>
+       <div class="header-title">
+        <div class="header-icon">
+         🏫
+        </div><span id="headerSchoolName">School Management System</span>
+       </div>
+       <div class="header-subtitle">
+        Complete fees tracking with WhatsApp notifications and teacher payroll management
+       </div>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
+       <div style="font-size: 0.875rem; color: #94a3b8;">
+        <div>
+         📞 <span id="headerSchoolPhone">+233 XX XXX XXXX</span>
+        </div>
+        <div id="whatsappStatus" style="margin-top:0.5rem;"></div>
+       </div><button class="header-logout" onclick="handleLogout()">🚪 Logout</button>
+      </div>
+     </div>
+    </header>
+    <main class="main-content">
+     <div class="content-wrapper"><!-- Tabs -->
+      <div class="tabs"><button class="tab active" onclick="switchTab('dashboard')">📊 Dashboard</button> <button class="tab" onclick="switchTab('students')">👥 Students &amp; Fees</button> <button class="tab" onclick="switchTab('teachers')">👨‍🏫 Teachers &amp; Payroll</button> <button class="tab" onclick="switchTab('receipts')">🧾 All Receipts</button>
+      </div><!-- Dashboard Tab -->
+      <div class="tab-content active" data-tab="dashboard">
+       <div class="stats-grid">
+        <div class="stat-card">
+         <div class="stat-icon">
+          👥
+         </div>
+         <div class="stat-label">
+          Total Students
+         </div>
+         <div class="stat-value" id="statTotalStudents">
+          0
+         </div>
+        </div>
+        <div class="stat-card">
+         <div class="stat-icon">
+          💰
+         </div>
+         <div class="stat-label">
+          Total Fees Collected
+         </div>
+         <div class="stat-value" id="statFeesCollected">
+          GH₵ 0
+         </div>
+        </div>
+        <div class="stat-card">
+         <div class="stat-icon">
+          📊
+         </div>
+         <div class="stat-label">
+          Fees Owing
+         </div>
+         <div class="stat-value" id="statFeesOwing">
+          GH₵ 0
+         </div>
+        </div>
+        <div class="stat-card">
+         <div class="stat-icon">
+          👨‍🏫
+         </div>
+         <div class="stat-label">
+          Total Teachers
+         </div>
+         <div class="stat-value" id="statTotalTeachers">
+          0
+         </div>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <div class="card-title">
+          Quick Actions
+         </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem;"><button class="btn btn-primary" onclick="openModal('addStudentModal')"> ➕ Add Student </button> <button class="btn btn-success" onclick="openModal('recordFeeModal')"> 💰 Record Fee Payment </button> <button class="btn btn-primary" onclick="openModal('addTeacherModal')"> 👨‍🏫 Add Teacher </button> <button class="btn btn-success" onclick="openModal('paySalaryModal')"> 💵 Pay Salary </button>
+        </div>
+       </div>
+       <div class="card">
+        <div class="card-header">
+         <div class="card-title">
+          Recent Fee Payments
+         </div>
+        </div>
+        <div id="recentFeesContainer"></div>
+       </div>
+      </div><!-- Students Tab -->
+      <div class="tab-content" data-tab="students">
+       <div class="card">
+        <div class="card-header">
+         <div class="card-title">
+          Students &amp; Fee Management
+         </div><button class="btn btn-primary" onclick="openModal('addStudentModal')"> ➕ Add Student </button>
+        </div>
+        <div class="table-container">
+         <table class="table" id="studentsTable">
+          <thead>
+           <tr>
+            <th>Student ID</th>
+            <th>Name</th>
+            <th>Class</th>
+            <th>Parent Phone</th>
+            <th>Total Fees</th>
+            <th>Paid</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Actions</th>
+           </tr>
+          </thead>
+          <tbody id="studentsTableBody"></tbody>
+         </table>
+        </div>
+       </div>
+      </div><!-- Teachers Tab -->
+      <div class="tab-content" data-tab="teachers">
+       <div class="card">
+        <div class="card-header">
+         <div class="card-title">
+          Teachers &amp; Payroll
+         </div><button class="btn btn-primary" onclick="openModal('addTeacherModal')"> ➕ Add Teacher </button>
+        </div>
+        <div class="table-container">
+         <table class="table" id="teachersTable">
+          <thead>
+           <tr>
+            <th>Teacher ID</th>
+            <th>Name</th>
+            <th>Monthly Salary</th>
+            <th>Bank Account</th>
+            <th>Actions</th>
+           </tr>
+          </thead>
+          <tbody id="teachersTableBody"></tbody>
+         </table>
+        </div>
+       </div>
+      </div><!-- Receipts Tab -->
+      <div class="tab-content" data-tab="receipts">
+       <div class="card">
+        <div class="card-header">
+         <div class="card-title">
+          All Payment Receipts
+         </div>
+        </div>
+        <div class="table-container">
+         <table class="table">
+          <thead>
+           <tr>
+            <th>Receipt No.</th>
+            <th>Date</th>
+            <th>Type</th>
+            <th>For</th>
+            <th>Amount</th>
+            <th>Method</th>
+            <th>WhatsApp</th>
+            <th>Actions</th>
+           </tr>
+          </thead>
+          <tbody id="receiptsTableBody"></tbody>
+         </table>
+        </div>
+       </div>
+      </div>
+     </div>
+    </main>
+   </div>
+  </div><!-- Add Student Modal -->
+  <div class="modal" id="addStudentModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <div class="modal-title">
+      Add New Student
+     </div><button class="close-btn" onclick="closeModal('addStudentModal')">×</button>
+    </div>
+    <div class="modal-body">
+     <div class="form-grid">
+      <div class="form-group"><label class="form-label" for="studentId">Student ID *</label> <input type="text" id="studentId" class="form-input" placeholder="e.g., STU001">
+      </div>
+      <div class="form-group"><label class="form-label" for="studentName">Full Name *</label> <input type="text" id="studentName" class="form-input" placeholder="Student name">
+      </div>
+      <div class="form-group"><label class="form-label" for="studentClass">Class *</label> <input type="text" id="studentClass" class="form-input" placeholder="e.g., JHS 1A">
+      </div>
+      <div class="form-group"><label class="form-label" for="parentPhone">Parent Phone *</label> <input type="tel" id="parentPhone" class="form-input" placeholder="+233 XX XXX XXXX or 0XX XXX XXXX">
+      </div>
+      <div class="form-group"><label class="form-label" for="totalFees">Total Fees (GH₵) *</label> <input type="number" id="totalFees" class="form-input" placeholder="0.00" step="0.01">
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addStudentModal')">Cancel</button> <button class="btn btn-primary" id="submitStudentBtn" onclick="submitStudent()">Add Student</button>
+    </div>
+   </div>
+  </div><!-- Record Fee Payment Modal -->
+  <div class="modal" id="recordFeeModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <div class="modal-title">
+      Record Fee Payment
+     </div><button class="close-btn" onclick="closeModal('recordFeeModal')">×</button>
+    </div>
+    <div class="modal-body">
+     <div class="form-grid">
+      <div class="form-group"><label class="form-label" for="feeStudentId">Student ID *</label> <input type="text" id="feeStudentId" class="form-input" placeholder="Enter student ID">
+      </div>
+      <div class="form-group"><label class="form-label" for="feeAmount">Amount (GH₵) *</label> <input type="number" id="feeAmount" class="form-input" placeholder="0.00" step="0.01">
+      </div>
+      <div class="form-group"><label class="form-label" for="feeMethod">Payment Method *</label> <select id="feeMethod" class="form-select"> <option value="">Select method</option> <option value="Cash">Cash</option> <option value="Mobile Money">Mobile Money</option> <option value="Bank Transfer">Bank Transfer</option> <option value="Cheque">Cheque</option> </select>
+      </div>
+     </div>
+     <div id="whatsappPreviewContainer"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('recordFeeModal')">Cancel</button> <button class="btn btn-success" id="submitFeeBtn" onclick="submitFeePayment()">💚 Record Payment &amp; Send WhatsApp</button>
+    </div>
+   </div>
+  </div><!-- Add Teacher Modal -->
+  <div class="modal" id="addTeacherModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <div class="modal-title">
+      Add New Teacher
+     </div><button class="close-btn" onclick="closeModal('addTeacherModal')">×</button>
+    </div>
+    <div class="modal-body">
+     <div class="form-grid">
+      <div class="form-group"><label class="form-label" for="teacherId">Teacher ID *</label> <input type="text" id="teacherId" class="form-input" placeholder="e.g., TCH001">
+      </div>
+      <div class="form-group"><label class="form-label" for="teacherName">Full Name *</label> <input type="text" id="teacherName" class="form-input" placeholder="Teacher name">
+      </div>
+      <div class="form-group"><label class="form-label" for="monthlySalary">Monthly Salary (GH₵) *</label> <input type="number" id="monthlySalary" class="form-input" placeholder="0.00" step="0.01">
+      </div>
+      <div class="form-group"><label class="form-label" for="bankAccount">Bank Account Number *</label> <input type="text" id="bankAccount" class="form-input" placeholder="Account number">
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('addTeacherModal')">Cancel</button> <button class="btn btn-primary" id="submitTeacherBtn" onclick="submitTeacher()">Add Teacher</button>
+    </div>
+   </div>
+  </div><!-- Pay Salary Modal -->
+  <div class="modal" id="paySalaryModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <div class="modal-title">
+      Pay Teacher Salary
+     </div><button class="close-btn" onclick="closeModal('paySalaryModal')">×</button>
+    </div>
+    <div class="modal-body">
+     <div class="form-grid">
+      <div class="form-group"><label class="form-label" for="salaryTeacherId">Teacher ID *</label> <input type="text" id="salaryTeacherId" class="form-input" placeholder="Enter teacher ID">
+      </div>
+      <div class="form-group"><label class="form-label" for="salaryAmount">Amount (GH₵) *</label> <input type="number" id="salaryAmount" class="form-input" placeholder="0.00" step="0.01">
+      </div>
+      <div class="form-group"><label class="form-label" for="salaryMethod">Payment Method *</label> <select id="salaryMethod" class="form-select"> <option value="">Select method</option> <option value="Bank Transfer">Bank Transfer</option> <option value="Mobile Money">Mobile Money</option> <option value="Cash">Cash</option> <option value="Cheque">Cheque</option> </select>
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('paySalaryModal')">Cancel</button> <button class="btn btn-success" id="submitSalaryBtn" onclick="submitSalary()">Pay Salary</button>
+    </div>
+   </div>
+  </div><!-- Receipt Modal -->
+  <div class="modal" id="receiptModal">
+   <div class="modal-content">
+    <div class="modal-header">
+     <div class="modal-title">
+      Payment Receipt
+     </div><button class="close-btn" onclick="closeModal('receiptModal')">×</button>
+    </div>
+    <div class="modal-body" id="receiptContent"></div>
+    <div class="modal-footer"><button class="btn btn-secondary" onclick="closeModal('receiptModal')">Close</button> <button class="btn btn-primary" onclick="window.print()">🖨️ Print Receipt</button>
+    </div>
+   </div>
+  </div><!-- Toast -->
+  <div class="toast" id="toast"><span id="toastIcon">✓</span> <span id="toastMessage">Success!</span>
+  </div>
+  <script>
+    let allData = [];
+    let currentTab = 'dashboard';
+    let currentSchoolId = null;
+    let currentSchool = null;
+
+    const defaultConfig = {
+      school_name: 'Excellence School',
+      school_phone: '+233 XX XXX XXXX'
+    };
+
+    // Login/Register Functions
+    function switchLoginTab(tabName) {
+      document.querySelectorAll('.login-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.login-form-container').forEach(form => form.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tabName + 'Form').classList.add('active');
+    }
+
+    async function handleLogin(event) {
+      event.preventDefault();
+      
+      const username = document.getElementById('loginUsername').value.trim();
+      const password = document.getElementById('loginPassword').value.trim();
+      const btn = document.getElementById('loginBtn');
+
+      if (!username || !password) {
+        showToast('Please enter username and password', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Logging in...';
+
+      // Find school account
+      const school = allData.find(d => 
+        d.type === 'school_config' && 
+        d.username === username && 
+        d.password === password
+      );
+
+      btn.disabled = false;
+      btn.innerHTML = '🔐 Login to Dashboard';
+
+      if (school) {
+        currentSchoolId = school.school_id;
+        currentSchool = school;
+        
+        await window.elementSdk.setConfig({
+          school_name: school.school_name,
+          school_phone: school.school_phone
+        });
+        
+        showToast('Login successful! Welcome back!', 'success');
+        enterDashboard();
+      } else {
+        showToast('Invalid username or password', 'error');
+      }
+    }
+
+    async function handleRegister(event) {
+      event.preventDefault();
+      
+      const schoolName = document.getElementById('regSchoolName').value.trim();
+      const schoolPhone = document.getElementById('regSchoolPhone').value.trim();
+      const location = document.getElementById('regLocation').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const username = document.getElementById('regUsername').value.trim();
+      const password = document.getElementById('regPassword').value.trim();
+      const accessCode = document.getElementById('regAccessCode').value.trim();
+      const btn = document.getElementById('registerBtn');
+
+      if (!schoolName || !schoolPhone || !location || !username || !password) {
+        showToast('Please fill in all required fields', 'error');
+        return;
+      }
+
+      // Check if username already exists
+      const existingUser = allData.find(d => d.type === 'school_config' && d.username === username);
+      if (existingUser) {
+        showToast('Username already exists. Please choose another.', 'error');
+        return;
+      }
+
+      if (allData.length >= 999) {
+        showToast('Maximum limit reached', 'error');
+        return;
+      }
+
+      const whatsappEnabled = accessCode === 'cooper1721';
+      const schoolId = 'SCH' + Date.now();
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Creating account...';
+
+      const result = await window.dataSdk.create({
+        type: 'school_config',
+        school_id: schoolId,
+        school_name: schoolName,
+        school_phone: schoolPhone,
+        location: location,
+        email: email,
+        username: username,
+        password: password,
+        whatsapp_enabled: whatsappEnabled ? 'yes' : 'no',
+        setup_completed: 'yes',
+        created_at: new Date().toISOString()
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = '✨ Create Account & Start';
+
+      if (result.isOk) {
+        currentSchoolId = schoolId;
+        
+        await window.elementSdk.setConfig({
+          school_name: schoolName,
+          school_phone: schoolPhone
+        });
+        
+        if (whatsappEnabled) {
+          showToast('Account created! WhatsApp activated ✅', 'success');
+        } else {
+          showToast('Account created! (WhatsApp disabled)', 'success');
+        }
+        
+        // Clear form
+        document.getElementById('registerForm').reset();
+        
+        // Wait a moment then enter dashboard
+        setTimeout(() => {
+          enterDashboard();
+        }, 1000);
+      } else {
+        showToast('Failed to create account', 'error');
+      }
+    }
+
+    function handleLogout() {
+      currentSchoolId = null;
+      currentSchool = null;
+      
+      document.getElementById('mainDashboard').style.display = 'none';
+      document.getElementById('loginPage').style.display = 'flex';
+      
+      // Clear login form
+      document.getElementById('loginUsername').value = '';
+      document.getElementById('loginPassword').value = '';
+      
+      showToast('Logged out successfully', 'success');
+    }
+
+    function enterDashboard() {
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('mainDashboard').style.display = 'flex';
+      
+      updateDashboard();
+      renderCurrentTab();
+    }
+
+    // SDK Initialization
+    const dataHandler = {
+      onDataChanged(data) {
+        allData = data;
+        
+        // If logged in, update current school data
+        if (currentSchoolId) {
+          currentSchool = data.find(d => d.type === 'school_config' && d.school_id === currentSchoolId);
+          
+          if (currentSchool) {
+            updateDashboard();
+            renderCurrentTab();
+          }
+        }
+      }
+    };
+
+    async function initApp() {
+      try {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error('Failed to initialize Data SDK');
+        }
+
+        await window.elementSdk.init({
+          defaultConfig: defaultConfig,
+          onConfigChange: async (config) => {
+            const headerName = document.getElementById('headerSchoolName');
+            const headerPhone = document.getElementById('headerSchoolPhone');
+            if (headerName) headerName.textContent = config.school_name || defaultConfig.school_name;
+            if (headerPhone) headerPhone.textContent = config.school_phone || defaultConfig.school_phone;
+          },
+          mapToCapabilities: (config) => ({
+            recolorables: [],
+            borderables: [],
+            fontEditable: undefined,
+            fontSizeable: undefined
+          }),
+          mapToEditPanelValues: (config) => new Map([
+            ['school_name', config.school_name || defaultConfig.school_name],
+            ['school_phone', config.school_phone || defaultConfig.school_phone]
+          ])
+        });
+      } catch (error) {
+        console.error('Initialization error:', error);
+      }
+    }
+
+    function updateDashboard() {
+      if (!currentSchoolId) return;
+      
+      const students = allData.filter(d => d.type === 'student' && d.school_id === currentSchoolId);
+      const teachers = allData.filter(d => d.type === 'teacher' && d.school_id === currentSchoolId);
+      const feePayments = allData.filter(d => d.type === 'receipt' && d.payment_for === 'fees' && d.school_id === currentSchoolId);
+
+      const totalFees = feePayments.reduce((sum, p) => sum + parseFloat(p.payment_amount || 0), 0);
+      const totalOwing = students.reduce((sum, s) => {
+        const total = parseFloat(s.total_fees || 0);
+        const paid = parseFloat(s.amount_paid || 0);
+        return sum + (total - paid);
+      }, 0);
+
+      document.getElementById('statTotalStudents').textContent = students.length;
+      document.getElementById('statFeesCollected').textContent = `GH₵ ${totalFees.toLocaleString('en-GH', { minimumFractionDigits: 2 })}`;
+      document.getElementById('statFeesOwing').textContent = `GH₵ ${totalOwing.toLocaleString('en-GH', { minimumFractionDigits: 2 })}`;
+      document.getElementById('statTotalTeachers').textContent = teachers.length;
+
+      // Update WhatsApp status
+      const whatsappStatusEl = document.getElementById('whatsappStatus');
+      if (whatsappStatusEl && currentSchool) {
+        const whatsappEnabled = currentSchool.whatsapp_enabled === 'yes';
+        if (whatsappEnabled) {
+          whatsappStatusEl.innerHTML = '<span style="color:#25D366;">💚 WhatsApp: Active</span>';
+        } else {
+          whatsappStatusEl.innerHTML = '<span style="color:#ef4444;">🔒 WhatsApp: Disabled</span>';
+        }
+      }
+
+      renderRecentPayments();
+    }
+
+    function renderRecentPayments() {
+      const container = document.getElementById('recentFeesContainer');
+      const feePayments = allData.filter(d => d.type === 'receipt' && d.payment_for === 'fees' && d.school_id === currentSchoolId).slice(-5).reverse();
+
+      if (feePayments.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-icon">💰</div>
+            <div class="empty-title">No fee payments yet</div>
+            <p>Record your first payment to get started</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = `
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Receipt No.</th>
+              <th>Date</th>
+              <th>Student</th>
+              <th>Amount</th>
+              <th>Method</th>
+              <th>WhatsApp</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${feePayments.map(p => `
+              <tr>
+                <td><strong>${p.receipt_number}</strong></td>
+                <td>${new Date(p.payment_date).toLocaleDateString('en-GB')}</td>
+                <td>${p.student_name || 'N/A'}</td>
+                <td><strong>GH₵ ${parseFloat(p.payment_amount).toLocaleString('en-GH', { minimumFractionDigits: 2 })}</strong></td>
+                <td>${p.payment_method}</td>
+                <td><span class="status-badge status-sent">${p.whatsapp_sent === 'yes' ? '💚 Sent' : '✗ Not sent'}</span></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function switchTab(tabName) {
+      currentTab = tabName;
+
+      document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.querySelector(`.tab-content[data-tab="${tabName}"]`).classList.add('active');
+
+      renderCurrentTab();
+    }
+
+    function renderCurrentTab() {
+      if (currentTab === 'students') renderStudentsTable();
+      if (currentTab === 'teachers') renderTeachersTable();
+      if (currentTab === 'receipts') renderReceiptsTable();
+    }
+
+    function renderStudentsTable() {
+      const tbody = document.getElementById('studentsTableBody');
+      const students = allData.filter(d => d.type === 'student' && d.school_id === currentSchoolId);
+
+      if (students.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9">
+              <div class="empty-state">
+                <div class="empty-icon">👥</div>
+                <div class="empty-title">No students yet</div>
+                <p>Add your first student to get started</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = students.map(s => {
+        const total = parseFloat(s.total_fees || 0);
+        const paid = parseFloat(s.amount_paid || 0);
+        const balance = total - paid;
+        const status = balance <= 0 ? 'paid' : 'owing';
+
+        return `
+          <tr>
+            <td><strong>${s.student_id}</strong></td>
+            <td>${s.student_name}</td>
+            <td>${s.class_name}</td>
+            <td>${s.parent_phone}</td>
+            <td>GH₵ ${total.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</td>
+            <td>GH₵ ${paid.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</td>
+            <td><strong>GH₵ ${balance.toLocaleString('en-GH', { minimumFractionDigits: 2 })}</strong></td>
+            <td><span class="status-badge status-${status}">${status === 'paid' ? 'PAID' : 'OWING'}</span></td>
+            <td>
+              <button class="btn-icon" onclick="deleteRecord('${s.__backendId}')" title="Delete">🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderTeachersTable() {
+      const tbody = document.getElementById('teachersTableBody');
+      const teachers = allData.filter(d => d.type === 'teacher' && d.school_id === currentSchoolId);
+
+      if (teachers.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="empty-state">
+                <div class="empty-icon">👨‍🏫</div>
+                <div class="empty-title">No teachers yet</div>
+                <p>Add your first teacher to get started</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = teachers.map(t => `
+        <tr>
+          <td><strong>${t.teacher_id}</strong></td>
+          <td>${t.teacher_name}</td>
+          <td><strong>GH₵ ${parseFloat(t.monthly_salary).toLocaleString('en-GH', { minimumFractionDigits: 2 })}</strong></td>
+          <td>${t.bank_account}</td>
+          <td>
+            <button class="btn-icon" onclick="deleteRecord('${t.__backendId}')" title="Delete">🗑️</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function renderReceiptsTable() {
+      const tbody = document.getElementById('receiptsTableBody');
+      const receipts = allData.filter(d => d.type === 'receipt' && d.school_id === currentSchoolId).sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date));
+
+      if (receipts.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="8">
+              <div class="empty-state">
+                <div class="empty-icon">🧾</div>
+                <div class="empty-title">No receipts yet</div>
+                <p>Record your first payment to generate receipts</p>
+              </div>
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = receipts.map(r => `
+        <tr>
+          <td><strong>${r.receipt_number}</strong></td>
+          <td>${new Date(r.payment_date).toLocaleDateString('en-GB')}</td>
+          <td>${r.payment_for === 'fees' ? '👥 Student Fee' : '👨‍🏫 Teacher Salary'}</td>
+          <td>${r.payment_for === 'fees' ? r.student_name : r.teacher_name}</td>
+          <td><strong>GH₵ ${parseFloat(r.payment_amount).toLocaleString('en-GH', { minimumFractionDigits: 2 })}</strong></td>
+          <td>${r.payment_method}</td>
+          <td><span class="status-badge status-sent">${r.whatsapp_sent === 'yes' ? '💚 Sent' : '✗ Not sent'}</span></td>
+          <td>
+            <button class="btn-icon" onclick="viewReceipt('${r.__backendId}')" title="View & Print">🖨️</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Submit Functions
+    async function submitStudent() {
+      if (!currentSchoolId) {
+        showToast('Please login first', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('submitStudentBtn');
+      const studentId = document.getElementById('studentId').value.trim();
+      const studentName = document.getElementById('studentName').value.trim();
+      const studentClass = document.getElementById('studentClass').value.trim();
+      const parentPhone = document.getElementById('parentPhone').value.trim();
+      const totalFees = document.getElementById('totalFees').value.trim();
+
+      if (!studentId || !studentName || !studentClass || !parentPhone || !totalFees) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      if (allData.length >= 999) {
+        showToast('Maximum limit of 999 records reached', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Adding...';
+
+      const result = await window.dataSdk.create({
+        type: 'student',
+        school_id: currentSchoolId,
+        student_id: studentId,
+        student_name: studentName,
+        class_name: studentClass,
+        parent_phone: parentPhone,
+        total_fees: totalFees,
+        amount_paid: '0',
+        created_at: new Date().toISOString()
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = 'Add Student';
+
+      if (result.isOk) {
+        showToast('Student added successfully!', 'success');
+        closeModal('addStudentModal');
+      } else {
+        showToast('Failed to add student', 'error');
+      }
+    }
+
+    async function submitFeePayment() {
+      if (!currentSchoolId) {
+        showToast('Please login first', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('submitFeeBtn');
+      const studentId = document.getElementById('feeStudentId').value.trim();
+      const amount = document.getElementById('feeAmount').value.trim();
+      const method = document.getElementById('feeMethod').value;
+
+      if (!studentId || !amount || !method) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      const student = allData.find(d => d.type === 'student' && d.student_id === studentId && d.school_id === currentSchoolId);
+      if (!student) {
+        showToast('Student ID not found', 'error');
+        return;
+      }
+
+      if (allData.length >= 999) {
+        showToast('Maximum limit reached', 'error');
+        return;
+      }
+
+      const whatsappEnabled = currentSchool && currentSchool.whatsapp_enabled === 'yes';
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+
+      const receiptNumber = `FEE${String(allData.filter(d => d.type === 'receipt' && d.payment_for === 'fees' && d.school_id === currentSchoolId).length + 1).padStart(5, '0')}`;
+      const paymentDate = new Date().toISOString();
+
+      const result = await window.dataSdk.create({
+        type: 'receipt',
+        school_id: currentSchoolId,
+        receipt_number: receiptNumber,
+        payment_for: 'fees',
+        student_id: studentId,
+        student_name: student.student_name,
+        payment_amount: amount,
+        payment_method: method,
+        payment_date: paymentDate,
+        whatsapp_sent: whatsappEnabled ? 'yes' : 'no',
+        created_at: paymentDate
+      });
+
+      if (result.isOk) {
+        const newPaid = parseFloat(student.amount_paid || 0) + parseFloat(amount);
+        student.amount_paid = newPaid.toString();
+        await window.dataSdk.update(student);
+
+        if (whatsappEnabled) {
+          const config = window.elementSdk.config;
+          const schoolName = config.school_name || defaultConfig.school_name;
+          const balance = parseFloat(student.total_fees) - newPaid;
+          const whatsappText = `*${schoolName}*\n\n✅ *Fee Payment Received*\n\n👤 *Student:* ${student.student_name}\n💰 *Amount Paid:* GH₵${parseFloat(amount).toFixed(2)}\n🧾 *Receipt No:* ${receiptNumber}\n📊 *Balance:* GH₵${balance.toFixed(2)}\n\nThank you for your payment!`;
+          
+          sendWhatsApp(student.parent_phone, whatsappText);
+          showToast('Payment recorded & WhatsApp opened!', 'success');
+        } else {
+          showToast('Payment recorded! (WhatsApp disabled)', 'success');
+        }
+
+        closeModal('recordFeeModal');
+      } else {
+        showToast('Failed to record payment', 'error');
+      }
+
+      btn.disabled = false;
+      btn.innerHTML = '💚 Record Payment & Send WhatsApp';
+    }
+
+    async function submitTeacher() {
+      if (!currentSchoolId) {
+        showToast('Please login first', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('submitTeacherBtn');
+      const teacherId = document.getElementById('teacherId').value.trim();
+      const teacherName = document.getElementById('teacherName').value.trim();
+      const monthlySalary = document.getElementById('monthlySalary').value.trim();
+      const bankAccount = document.getElementById('bankAccount').value.trim();
+
+      if (!teacherId || !teacherName || !monthlySalary || !bankAccount) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      if (allData.length >= 999) {
+        showToast('Maximum limit reached', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Adding...';
+
+      const result = await window.dataSdk.create({
+        type: 'teacher',
+        school_id: currentSchoolId,
+        teacher_id: teacherId,
+        teacher_name: teacherName,
+        monthly_salary: monthlySalary,
+        bank_account: bankAccount,
+        created_at: new Date().toISOString()
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = 'Add Teacher';
+
+      if (result.isOk) {
+        showToast('Teacher added successfully!', 'success');
+        closeModal('addTeacherModal');
+      } else {
+        showToast('Failed to add teacher', 'error');
+      }
+    }
+
+    async function submitSalary() {
+      if (!currentSchoolId) {
+        showToast('Please login first', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('submitSalaryBtn');
+      const teacherId = document.getElementById('salaryTeacherId').value.trim();
+      const amount = document.getElementById('salaryAmount').value.trim();
+      const method = document.getElementById('salaryMethod').value;
+
+      if (!teacherId || !amount || !method) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      const teacher = allData.find(d => d.type === 'teacher' && d.teacher_id === teacherId && d.school_id === currentSchoolId);
+      if (!teacher) {
+        showToast('Teacher ID not found', 'error');
+        return;
+      }
+
+      if (allData.length >= 999) {
+        showToast('Maximum limit reached', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+
+      const receiptNumber = `SAL${String(allData.filter(d => d.type === 'receipt' && d.payment_for === 'salary' && d.school_id === currentSchoolId).length + 1).padStart(5, '0')}`;
+
+      const result = await window.dataSdk.create({
+        type: 'receipt',
+        school_id: currentSchoolId,
+        receipt_number: receiptNumber,
+        payment_for: 'salary',
+        teacher_id: teacherId,
+        teacher_name: teacher.teacher_name,
+        payment_amount: amount,
+        payment_method: method,
+        payment_date: new Date().toISOString(),
+        whatsapp_sent: 'no',
+        created_at: new Date().toISOString()
+      });
+
+      btn.disabled = false;
+      btn.innerHTML = 'Pay Salary';
+
+      if (result.isOk) {
+        showToast('Salary paid successfully!', 'success');
+        closeModal('paySalaryModal');
+      } else {
+        showToast('Failed to pay salary', 'error');
+      }
+    }
+
+    function viewReceipt(receiptId) {
+      const receipt = allData.find(d => d.__backendId === receiptId);
+      if (!receipt) return;
+
+      const config = window.elementSdk.config;
+      const schoolName = config.school_name || defaultConfig.school_name;
+      const schoolPhone = config.school_phone || defaultConfig.school_phone;
+
+      const date = new Date(receipt.payment_date);
+      const formattedDate = date.toLocaleDateString('en-GB');
+      const formattedTime = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+      let recipientInfo = '';
+      let whatsappMessage = '';
+
+      if (receipt.payment_for === 'fees') {
+        const student = allData.find(d => d.type === 'student' && d.student_id === receipt.student_id && d.school_id === currentSchoolId);
+        recipientInfo = `
+          <div class="receipt-item">
+            <div class="receipt-label">Student ID</div>
+            <div class="receipt-value">${receipt.student_id}</div>
+          </div>
+          <div class="receipt-item">
+            <div class="receipt-label">Student Name</div>
+            <div class="receipt-value">${receipt.student_name}</div>
+          </div>
+          <div class="receipt-item">
+            <div class="receipt-label">Class</div>
+            <div class="receipt-value">${student ? student.class_name : 'N/A'}</div>
+          </div>
+          <div class="receipt-item">
+            <div class="receipt-label">Parent Phone</div>
+            <div class="receipt-value">${student ? student.parent_phone : 'N/A'}</div>
+          </div>
+        `;
+
+        if (receipt.whatsapp_sent === 'yes' && student) {
+          const balance = parseFloat(student.total_fees) - parseFloat(student.amount_paid);
+          whatsappMessage = `
+            <div class="whatsapp-preview">
+              <div class="whatsapp-preview-title">💚 WhatsApp Sent to Parent</div>
+              <strong>${schoolName}</strong><br><br>
+              ✅ <strong>Fee Payment Received</strong><br><br>
+              👤 <strong>Student:</strong> ${receipt.student_name}<br>
+              💰 <strong>Amount Paid:</strong> GH₵${parseFloat(receipt.payment_amount).toFixed(2)}<br>
+              🧾 <strong>Receipt No:</strong> ${receipt.receipt_number}<br>
+              📊 <strong>Balance:</strong> GH₵${balance.toFixed(2)}<br><br>
+              Thank you for your payment!
+            </div>
+          `;
+        }
+      } else {
+        const teacher = allData.find(d => d.type === 'teacher' && d.teacher_id === receipt.teacher_id && d.school_id === currentSchoolId);
+        recipientInfo = `
+          <div class="receipt-item">
+            <div class="receipt-label">Teacher ID</div>
+            <div class="receipt-value">${receipt.teacher_id}</div>
+          </div>
+          <div class="receipt-item">
+            <div class="receipt-label">Teacher Name</div>
+            <div class="receipt-value">${receipt.teacher_name}</div>
+          </div>
+          <div class="receipt-item">
+            <div class="receipt-label">Bank Account</div>
+            <div class="receipt-value">${teacher ? teacher.bank_account : 'N/A'}</div>
+          </div>
+          <div class="receipt-item">
+            <div class="receipt-label">Payment Type</div>
+            <div class="receipt-value">Monthly Salary</div>
+          </div>
+        `;
+      }
+
+      const receiptHTML = `
+        <div class="receipt-duplicate-container">
+          <!-- SCHOOL COPY -->
+          <div>
+            <div class="receipt-copy-label">🏫 SCHOOL COPY</div>
+            <div class="receipt">
+              <div class="receipt-header">
+                <div class="receipt-logo">🏫</div>
+                <div class="receipt-school-name">${schoolName}</div>
+                <div class="receipt-school-info">Phone: ${schoolPhone}</div>
+              </div>
+
+              <div class="receipt-title">${receipt.payment_for === 'fees' ? 'FEE PAYMENT RECEIPT' : 'SALARY PAYMENT RECEIPT'}</div>
+
+              <div class="receipt-grid">
+                <div class="receipt-item">
+                  <div class="receipt-label">Receipt Number</div>
+                  <div class="receipt-value">${receipt.receipt_number}</div>
+                </div>
+                <div class="receipt-item">
+                  <div class="receipt-label">Date & Time</div>
+                  <div class="receipt-value">${formattedDate} ${formattedTime}</div>
+                </div>
+                ${recipientInfo}
+                <div class="receipt-item">
+                  <div class="receipt-label">Payment Method</div>
+                  <div class="receipt-value">${receipt.payment_method}</div>
+                </div>
+              </div>
+
+              <div class="receipt-amount-box">
+                <div class="receipt-amount">
+                  <div class="receipt-amount-label">Amount Paid</div>
+                  <div class="receipt-amount-value">GH₵ ${parseFloat(receipt.payment_amount).toLocaleString('en-GH', { minimumFractionDigits: 2 })}</div>
+                </div>
+              </div>
+
+              ${whatsappMessage}
+
+              <div class="receipt-stamp-confirmed">
+                <div class="stamp-image">
+                  <div class="stamp-circle">
+                    <div class="stamp-text">
+                      ✓<br>CONFIRMED<br>
+                      <div class="stamp-date">${formattedDate}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="receipt-footer">
+                <p><strong>Thank you for your payment!</strong></p>
+                <p>This is an official receipt from ${schoolName}</p>
+                <p style="margin-top: 1rem; font-size: 0.75rem;">Generated by EduConnect Management System</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- CUT LINE -->
+          <div class="receipt-divider"></div>
+
+          <!-- STUDENT/TEACHER COPY -->
+          <div>
+            <div class="receipt-copy-label">${receipt.payment_for === 'fees' ? '👤 STUDENT COPY' : '👨‍🏫 TEACHER COPY'}</div>
+            <div class="receipt">
+              <div class="receipt-header">
+                <div class="receipt-logo">🏫</div>
+                <div class="receipt-school-name">${schoolName}</div>
+                <div class="receipt-school-info">Phone: ${schoolPhone}</div>
+              </div>
+
+              <div class="receipt-title">${receipt.payment_for === 'fees' ? 'FEE PAYMENT RECEIPT' : 'SALARY PAYMENT RECEIPT'}</div>
+
+              <div class="receipt-grid">
+                <div class="receipt-item">
+                  <div class="receipt-label">Receipt Number</div>
+                  <div class="receipt-value">${receipt.receipt_number}</div>
+                </div>
+                <div class="receipt-item">
+                  <div class="receipt-label">Date & Time</div>
+                  <div class="receipt-value">${formattedDate} ${formattedTime}</div>
+                </div>
+                ${recipientInfo}
+                <div class="receipt-item">
+                  <div class="receipt-label">Payment Method</div>
+                  <div class="receipt-value">${receipt.payment_method}</div>
+                </div>
+              </div>
+
+              <div class="receipt-amount-box">
+                <div class="receipt-amount">
+                  <div class="receipt-amount-label">Amount Paid</div>
+                  <div class="receipt-amount-value">GH₵ ${parseFloat(receipt.payment_amount).toLocaleString('en-GH', { minimumFractionDigits: 2 })}</div>
+                </div>
+              </div>
+
+              <div class="receipt-stamp-confirmed">
+                <div class="stamp-image">
+                  <div class="stamp-circle">
+                    <div class="stamp-text">
+                      ✓<br>CONFIRMED<br>
+                      <div class="stamp-date">${formattedDate}</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="receipt-footer">
+                <p><strong>Thank you for your payment!</strong></p>
+                <p>This is an official receipt from ${schoolName}</p>
+                <p style="margin-top: 1rem; font-size: 0.75rem;">Generated by EduConnect Management System</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('receiptContent').innerHTML = receiptHTML;
+      openModal('receiptModal');
+    }
+
+    async function deleteRecord(backendId) {
+      const record = allData.find(d => d.__backendId === backendId);
+      if (!record) return;
+
+      const confirmDelete = document.createElement('div');
+      confirmDelete.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);padding:2rem;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:3000;text-align:center;border:1px solid rgba(255,255,255,0.1);backdrop-filter:blur(20px);';
+      confirmDelete.innerHTML = `
+        <div style="font-size:3rem;margin-bottom:1rem;">🗑️</div>
+        <div style="font-size:1.25rem;font-weight:600;margin-bottom:1rem;color:white;">Delete this record?</div>
+        <div style="display:flex;gap:1rem;justify-content:center;">
+          <button class="btn btn-secondary" onclick="this.closest('div').remove()">Cancel</button>
+          <button class="btn btn-primary" onclick="confirmDeleteRecord('${backendId}')">Delete</button>
+        </div>
+      `;
+      document.body.appendChild(confirmDelete);
+    }
+
+    async function confirmDeleteRecord(backendId) {
+      const record = allData.find(d => d.__backendId === backendId);
+      document.body.querySelector('div[style*="z-index:3000"]')?.remove();
+      
+      const result = await window.dataSdk.delete(record);
+      if (result.isOk) {
+        showToast('Record deleted successfully', 'success');
+      } else {
+        showToast('Failed to delete record', 'error');
+      }
+    }
+
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+      
+      if (modalId === 'recordFeeModal') {
+        document.getElementById('feeAmount').addEventListener('input', updateWhatsAppPreview);
+        document.getElementById('feeStudentId').addEventListener('input', updateWhatsAppPreview);
+      }
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.remove('active');
+      modal.querySelectorAll('input, select').forEach(input => input.value = '');
+      
+      if (modalId === 'recordFeeModal') {
+        document.getElementById('whatsappPreviewContainer').innerHTML = '';
+      }
+    }
+
+    function updateWhatsAppPreview() {
+      const studentId = document.getElementById('feeStudentId').value.trim();
+      const amount = document.getElementById('feeAmount').value.trim();
+      const container = document.getElementById('whatsappPreviewContainer');
+
+      if (!studentId || !amount) {
+        container.innerHTML = '';
+        return;
+      }
+
+      const student = allData.find(d => d.type === 'student' && d.student_id === studentId && d.school_id === currentSchoolId);
+      if (!student) {
+        container.innerHTML = '<p style="color:#ef4444;margin-top:1rem;">Student ID not found</p>';
+        return;
+      }
+
+      const config = window.elementSdk.config;
+      const schoolName = config.school_name || defaultConfig.school_name;
+      const newPaid = parseFloat(student.amount_paid || 0) + parseFloat(amount);
+      const balance = parseFloat(student.total_fees) - newPaid;
+
+      container.innerHTML = `
+        <div class="whatsapp-preview">
+          <div class="whatsapp-preview-title">💚 WhatsApp Preview (will be sent to ${student.parent_phone})</div>
+          <strong>${schoolName}</strong><br><br>
+          ✅ <strong>Fee Payment Received</strong><br><br>
+          👤 <strong>Student:</strong> ${student.student_name}<br>
+          💰 <strong>Amount Paid:</strong> GH₵${parseFloat(amount).toFixed(2)}<br>
+          📊 <strong>Balance:</strong> GH₵${balance.toFixed(2)}<br><br>
+          Thank you for your payment!
+        </div>
+      `;
+    }
+
+    function sendWhatsApp(phoneNumber, message) {
+      try {
+        let cleanNumber = phoneNumber.replace(/[\s\-\(\)]/g, '');
+        
+        if (cleanNumber.startsWith('0')) {
+          cleanNumber = '233' + cleanNumber.substring(1);
+        }
+        
+        if (!cleanNumber.startsWith('+')) {
+          cleanNumber = '+' + cleanNumber;
+        }
+        
+        cleanNumber = cleanNumber.replace('+', '');
+        
+        const encodedMessage = encodeURIComponent(message);
+        
+        const whatsappUrl = `https://web.whatsapp.com/send?phone=${cleanNumber}&text=${encodedMessage}`;
+        
+        const link = document.createElement('a');
+        link.href = whatsappUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showWhatsAppNotification(phoneNumber, message);
+        
+        return true;
+      } catch (error) {
+        console.error('WhatsApp opening failed:', error);
+        
+        showManualWhatsAppInstructions(phoneNumber, message);
+        return false;
+      }
+    }
+
+    function showManualWhatsAppInstructions(phoneNumber, message) {
+      const modal = document.createElement('div');
+      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);display:flex;justify-content:center;align-items:center;z-index:4000;backdrop-filter:blur(10px);padding:1rem;';
+      modal.innerHTML = `
+        <div style="background:linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);padding:2rem;border-radius:1rem;max-width:40rem;width:100%;border:1px solid rgba(37, 211, 102, 0.3);">
+          <div style="text-align:center;margin-bottom:1.5rem;">
+            <div style="font-size:3rem;margin-bottom:0.5rem;">💚</div>
+            <div style="font-size:1.5rem;font-weight:700;color:#25D366;">Send via WhatsApp</div>
+          </div>
+          
+          <div style="background:rgba(37, 211, 102, 0.1);padding:1.5rem;border-radius:0.75rem;margin-bottom:1.5rem;border:1px solid rgba(37, 211, 102, 0.3);">
+            <div style="margin-bottom:1rem;">
+              <div style="font-size:0.75rem;color:#25D366;font-weight:700;margin-bottom:0.5rem;">PHONE NUMBER:</div>
+              <div style="background:rgba(15, 23, 42, 0.8);padding:0.75rem;border-radius:0.5rem;font-family:monospace;color:#fff;display:flex;justify-content:space-between;align-items:center;">
+                <span id="copyPhone">${phoneNumber}</span>
+                <button onclick="copyToClipboard('${phoneNumber}', 'phone')" style="background:#25D366;color:white;border:none;padding:0.5rem 1rem;border-radius:0.5rem;cursor:pointer;font-size:0.875rem;">Copy</button>
+              </div>
+            </div>
+            
+            <div>
+              <div style="font-size:0.75rem;color:#25D366;font-weight:700;margin-bottom:0.5rem;">MESSAGE:</div>
+              <div style="background:rgba(15, 23, 42, 0.8);padding:0.75rem;border-radius:0.5rem;font-family:monospace;color:#fff;max-height:15rem;overflow-y:auto;margin-bottom:0.5rem;white-space:pre-wrap;">${message}</div>
+              <button onclick="copyToClipboard(\`${message.replace(/`/g, '\\`')}\`, 'message')" style="background:#25D366;color:white;border:none;padding:0.75rem 1.5rem;border-radius:0.5rem;cursor:pointer;width:100%;font-weight:600;">📋 Copy Message</button>
+            </div>
+          </div>
+          
+          <div style="background:rgba(59, 130, 246, 0.1);padding:1rem;border-radius:0.5rem;margin-bottom:1.5rem;border:1px solid rgba(59, 130, 246, 0.3);">
+            <div style="font-size:0.875rem;color:#cbd5e1;line-height:1.7;">
+              <strong style="color:#3b82f6;">How to send:</strong><br>
+              1. Copy the phone number and message above<br>
+              2. Open WhatsApp on your phone or computer<br>
+              3. Start a chat with the phone number<br>
+              4. Paste and send the message
+            </div>
+          </div>
+          
+          <div style="display:flex;gap:1rem;">
+            <button onclick="this.closest('div').parentElement.remove()" style="flex:1;background:rgba(30, 41, 59, 0.8);color:#cbd5e1;border:1px solid rgba(255, 255, 255, 0.1);padding:0.875rem;border-radius:0.75rem;cursor:pointer;font-weight:600;">Close</button>
+            <a href="https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(message)}" target="_blank" rel="noopener noreferrer" style="flex:1;background:linear-gradient(135deg, #25D366 0%, #128C7E 100%);color:white;border:none;padding:0.875rem;border-radius:0.75rem;cursor:pointer;font-weight:600;text-decoration:none;text-align:center;" onclick="setTimeout(() => this.closest('div').parentElement.remove(), 1000)">💚 Open WhatsApp</a>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(modal);
+    }
+
+    function copyToClipboard(text, type) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast(`${type === 'phone' ? 'Phone number' : 'Message'} copied!`, 'success');
+      }).catch(() => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        showToast(`${type === 'phone' ? 'Phone number' : 'Message'} copied!`, 'success');
+      });
+    }
+
+    function showWhatsAppNotification(toNumber, message) {
+      const notification = document.createElement('div');
+      notification.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg, rgba(30, 41, 59, 0.98) 0%, rgba(15, 23, 42, 0.98) 100%);padding:2rem;border-radius:1rem;box-shadow:0 20px 60px rgba(0,0,0,0.6);z-index:3000;max-width:35rem;width:90%;border:1px solid rgba(37, 211, 102, 0.3);backdrop-filter:blur(20px);';
+      notification.innerHTML = `
+        <div style="text-align:center;">
+          <div style="font-size:3rem;margin-bottom:1rem;">���</div>
+          <div style="font-size:1.25rem;font-weight:700;color:#25D366;margin-bottom:1rem;">WhatsApp Opened!</div>
+          <div style="background:rgba(37, 211, 102, 0.1);padding:1.5rem;border-radius:0.75rem;margin-bottom:1rem;text-align:left;border:1px solid rgba(37, 211, 102, 0.3);">
+            <div style="display:grid;grid-template-columns:auto 1fr;gap:0.75rem;margin-bottom:1rem;">
+              <div style="font-size:0.875rem;color:#25D366;font-weight:700;">TO:</div>
+              <div style="font-size:0.875rem;color:#cbd5e1;font-weight:600;">${toNumber}</div>
+            </div>
+            <div style="border-top:1px solid rgba(37, 211, 102, 0.2);padding-top:1rem;">
+              <div style="font-size:0.75rem;color:#25D366;font-weight:700;margin-bottom:0.5rem;text-transform:uppercase;letter-spacing:0.05em;">Pre-filled Message:</div>
+              <div style="font-size:0.875rem;color:#e2e8f0;line-height:1.7;font-family:monospace;background:rgba(15, 23, 42, 0.5);padding:0.75rem;border-radius:0.5rem;white-space:pre-wrap;">${message}</div>
+            </div>
+          </div>
+          <div style="background:rgba(37, 211, 102, 0.05);padding:0.75rem;border-radius:0.5rem;margin-bottom:1rem;border:1px dashed rgba(37, 211, 102, 0.3);">
+            <div style="font-size:0.75rem;color:#94a3b8;">✓ WhatsApp opened in new tab</div>
+            <div style="font-size:0.75rem;color:#94a3b8;">✓ Message is pre-filled and ready</div>
+            <div style="font-size:0.75rem;color:#94a3b8;">✓ Just click SEND in WhatsApp!</div>
+          </div>
+          <button class="btn btn-primary" onclick="this.closest('div').remove()">Got it!</button>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        if (notification.parentNode) {
+          notification.remove();
+        }
+      }, 5000);
+    }
+
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      const icon = document.getElementById('toastIcon');
+      const msg = document.getElementById('toastMessage');
+
+      icon.textContent = type === 'success' ? '✓' : '✗';
+      msg.textContent = message;
+      toast.className = `toast ${type} active`;
+
+      setTimeout(() => toast.classList.remove('active'), 3000);
+    }
+
+    if (window.dataSdk && window.elementSdk) {
+      initApp();
+    } else {
+      document.addEventListener('DOMContentLoaded', initApp);
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a6ff73f808e9345',t:'MTc2NDU2NDY1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
