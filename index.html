@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>EduConnect - School Fees &amp; Payroll System</title>
-  <script src="/_sdk/data_sdk.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <style>
     body {
       box-sizing: border-box;
@@ -1487,6 +1485,8 @@
     }
   </style>
   <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/element_sdk.js" type="text/javascript"></script>
   <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
  </head>
  <body>
@@ -1874,11 +1874,6 @@
         currentSchoolId = school.school_id;
         currentSchool = school;
         
-        await window.elementSdk.setConfig({
-          school_name: school.school_name,
-          school_phone: school.school_phone
-        });
-        
         showToast('Login successful! Welcome back!', 'success');
         enterDashboard();
       } else {
@@ -1921,85 +1916,39 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="loading-spinner"></span> Creating account...';
 
-      // Check if Data SDK is available
-      if (window.dataSdk) {
-        const result = await window.dataSdk.create({
-          type: 'school_config',
-          school_id: schoolId,
-          school_name: schoolName,
-          school_phone: schoolPhone,
-          location: location,
-          email: email,
-          username: username,
-          password: password,
-          whatsapp_enabled: whatsappEnabled ? 'yes' : 'no',
-          setup_completed: 'yes',
-          created_at: new Date().toISOString()
-        });
-
-        btn.disabled = false;
-        btn.innerHTML = '✨ Create Account & Start';
-
-        if (result.isOk) {
-          currentSchoolId = schoolId;
-          
-          if (window.elementSdk) {
-            await window.elementSdk.setConfig({
-              school_name: schoolName,
-              school_phone: schoolPhone
-            });
-          }
-          
-          if (whatsappEnabled) {
-            showToast('Account created! WhatsApp activated ✅', 'success');
-          } else {
-            showToast('Account created! (WhatsApp disabled)', 'success');
-          }
-          
-          document.getElementById('registerForm').reset();
-          
-          setTimeout(() => {
-            enterDashboard();
-          }, 1000);
-        } else {
-          showToast('Failed to create account', 'error');
-        }
+      const newSchool = {
+        __backendId: 'local_' + schoolId,
+        type: 'school_config',
+        school_id: schoolId,
+        school_name: schoolName,
+        school_phone: schoolPhone,
+        location: location,
+        email: email,
+        username: username,
+        password: password,
+        whatsapp_enabled: whatsappEnabled ? 'yes' : 'no',
+        setup_completed: 'yes',
+        created_at: new Date().toISOString()
+      };
+      
+      allData.push(newSchool);
+      currentSchoolId = schoolId;
+      currentSchool = newSchool;
+      
+      btn.disabled = false;
+      btn.innerHTML = '✨ Create Account & Start';
+      
+      if (whatsappEnabled) {
+        showToast('Account created! WhatsApp activated ✅', 'success');
       } else {
-        // Standalone mode without SDK
-        const newSchool = {
-          __backendId: 'local_' + schoolId,
-          type: 'school_config',
-          school_id: schoolId,
-          school_name: schoolName,
-          school_phone: schoolPhone,
-          location: location,
-          email: email,
-          username: username,
-          password: password,
-          whatsapp_enabled: whatsappEnabled ? 'yes' : 'no',
-          setup_completed: 'yes',
-          created_at: new Date().toISOString()
-        };
-        
-        allData.push(newSchool);
-        currentSchoolId = schoolId;
-        currentSchool = newSchool;
-        
-        btn.disabled = false;
-        btn.innerHTML = '✨ Create Account & Start';
-        
-        if (whatsappEnabled) {
-          showToast('Account created! WhatsApp activated ✅', 'success');
-        } else {
-          showToast('Account created! (WhatsApp disabled)', 'success');
-        }
-        
-        document.getElementById('registerForm').reset();
-        
-        setTimeout(() => {
-          enterDashboard();
-        }, 1000);
+        showToast('Account created! (WhatsApp disabled)', 'success');
       }
+      
+      document.getElementById('registerForm').reset();
+      
+      setTimeout(() => {
+        enterDashboard();
+      }, 1000);
     }
 
     function handleLogout() {
@@ -2082,7 +2031,13 @@
     }
 
     function updateDashboard() {
-      if (!currentSchoolId) return;
+      if (!currentSchoolId || !currentSchool) return;
+      
+      // Update header with school info
+      const headerName = document.getElementById('headerSchoolName');
+      const headerPhone = document.getElementById('headerSchoolPhone');
+      if (headerName) headerName.textContent = currentSchool.school_name;
+      if (headerPhone) headerPhone.textContent = currentSchool.school_phone;
       
       const students = allData.filter(d => d.type === 'student' && d.school_id === currentSchoolId);
       const teachers = allData.filter(d => d.type === 'teacher' && d.school_id === currentSchoolId);
@@ -2312,53 +2267,28 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="loading-spinner"></span> Adding...';
 
-      if (window.dataSdk) {
-        const result = await window.dataSdk.create({
-          type: 'student',
-          school_id: currentSchoolId,
-          student_id: studentId,
-          student_name: studentName,
-          class_name: studentClass,
-          parent_phone: parentPhone,
-          total_fees: totalFees,
-          amount_paid: '0',
-          created_at: new Date().toISOString()
-        });
-
-        btn.disabled = false;
-        btn.innerHTML = 'Add Student';
-
-        if (result.isOk) {
-          showToast('Student added successfully!', 'success');
-          closeModal('addStudentModal');
-        } else {
-          showToast('Failed to add student', 'error');
-        }
-      } else {
-        // Standalone mode
-        const newStudent = {
-          __backendId: 'local_STU_' + Date.now(),
-          type: 'student',
-          school_id: currentSchoolId,
-          student_id: studentId,
-          student_name: studentName,
-          class_name: studentClass,
-          parent_phone: parentPhone,
-          total_fees: totalFees,
-          amount_paid: '0',
-          created_at: new Date().toISOString()
-        };
-        
-        allData.push(newStudent);
-        
-        btn.disabled = false;
-        btn.innerHTML = 'Add Student';
-        
-        showToast('Student added successfully!', 'success');
-        closeModal('addStudentModal');
-        updateDashboard();
-        renderCurrentTab();
-      }
+      const newStudent = {
+        __backendId: 'local_STU_' + Date.now(),
+        type: 'student',
+        school_id: currentSchoolId,
+        student_id: studentId,
+        student_name: studentName,
+        class_name: studentClass,
+        parent_phone: parentPhone,
+        total_fees: totalFees,
+        amount_paid: '0',
+        created_at: new Date().toISOString()
+      };
+      
+      allData.push(newStudent);
+      
+      btn.disabled = false;
+      btn.innerHTML = 'Add Student';
+      
+      showToast('Student added successfully!', 'success');
+      closeModal('addStudentModal');
+      updateDashboard();
+      renderCurrentTab();
     }
 
     async function submitFeePayment() {
@@ -2396,79 +2326,40 @@
       const receiptNumber = `FEE${String(allData.filter(d => d.type === 'receipt' && d.payment_for === 'fees' && d.school_id === currentSchoolId).length + 1).padStart(5, '0')}`;
       const paymentDate = new Date().toISOString();
 
-      if (window.dataSdk) {
-        const result = await window.dataSdk.create({
-          type: 'receipt',
-          school_id: currentSchoolId,
-          receipt_number: receiptNumber,
-          payment_for: 'fees',
-          student_id: studentId,
-          student_name: student.student_name,
-          payment_amount: amount,
-          payment_method: method,
-          payment_date: paymentDate,
-          whatsapp_sent: whatsappEnabled ? 'yes' : 'no',
-          created_at: paymentDate
-        });
+      const newReceipt = {
+        __backendId: 'local_REC_' + Date.now(),
+        type: 'receipt',
+        school_id: currentSchoolId,
+        receipt_number: receiptNumber,
+        payment_for: 'fees',
+        student_id: studentId,
+        student_name: student.student_name,
+        payment_amount: amount,
+        payment_method: method,
+        payment_date: paymentDate,
+        whatsapp_sent: whatsappEnabled ? 'yes' : 'no',
+        created_at: paymentDate
+      };
+      
+      allData.push(newReceipt);
+      
+      const newPaid = parseFloat(student.amount_paid || 0) + parseFloat(amount);
+      student.amount_paid = newPaid.toString();
 
-        if (result.isOk) {
-          const newPaid = parseFloat(student.amount_paid || 0) + parseFloat(amount);
-          student.amount_paid = newPaid.toString();
-          await window.dataSdk.update(student);
-
-          if (whatsappEnabled) {
-            const config = window.elementSdk ? window.elementSdk.config : {};
-            const schoolName = config.school_name || defaultConfig.school_name;
-            const balance = parseFloat(student.total_fees) - newPaid;
-            const whatsappText = `*${schoolName}*\n\n✅ *Fee Payment Received*\n\n👤 *Student:* ${student.student_name}\n💰 *Amount Paid:* GH₵${parseFloat(amount).toFixed(2)}\n🧾 *Receipt No:* ${receiptNumber}\n📊 *Balance:* GH₵${balance.toFixed(2)}\n\nThank you for your payment!`;
-            
-            sendWhatsApp(student.parent_phone, whatsappText);
-            showToast('Payment recorded & WhatsApp opened!', 'success');
-          } else {
-            showToast('Payment recorded! (WhatsApp disabled)', 'success');
-          }
-
-          closeModal('recordFeeModal');
-        } else {
-          showToast('Failed to record payment', 'error');
-        }
+      if (whatsappEnabled) {
+        const schoolName = currentSchool.school_name;
+        const balance = parseFloat(student.total_fees) - newPaid;
+        const whatsappText = `*${schoolName}*\n\n✅ *Fee Payment Received*\n\n👤 *Student:* ${student.student_name}\n💰 *Amount Paid:* GH₵${parseFloat(amount).toFixed(2)}\n🧾 *Receipt No:* ${receiptNumber}\n📊 *Balance:* GH₵${balance.toFixed(2)}\n\nThank you for your payment!`;
+        
+        sendWhatsApp(student.parent_phone, whatsappText);
+        showToast('Payment recorded & WhatsApp opened!', 'success');
       } else {
-        // Standalone mode
-        const newReceipt = {
-          __backendId: 'local_REC_' + Date.now(),
-          type: 'receipt',
-          school_id: currentSchoolId,
-          receipt_number: receiptNumber,
-          payment_for: 'fees',
-          student_id: studentId,
-          student_name: student.student_name,
-          payment_amount: amount,
-          payment_method: method,
-          payment_date: paymentDate,
-          whatsapp_sent: whatsappEnabled ? 'yes' : 'no',
-          created_at: paymentDate
-        };
-        
-        allData.push(newReceipt);
-        
-        const newPaid = parseFloat(student.amount_paid || 0) + parseFloat(amount);
-        student.amount_paid = newPaid.toString();
-
-        if (whatsappEnabled) {
-          const schoolName = currentSchool.school_name;
-          const balance = parseFloat(student.total_fees) - newPaid;
-          const whatsappText = `*${schoolName}*\n\n✅ *Fee Payment Received*\n\n👤 *Student:* ${student.student_name}\n💰 *Amount Paid:* GH₵${parseFloat(amount).toFixed(2)}\n🧾 *Receipt No:* ${receiptNumber}\n📊 *Balance:* GH₵${balance.toFixed(2)}\n\nThank you for your payment!`;
-          
-          sendWhatsApp(student.parent_phone, whatsappText);
-          showToast('Payment recorded & WhatsApp opened!', 'success');
-        } else {
-          showToast('Payment recorded! (WhatsApp disabled)', 'success');
-        }
-
-        closeModal('recordFeeModal');
-        updateDashboard();
-        renderCurrentTab();
+        showToast('Payment recorded! (WhatsApp disabled)', 'success');
       }
+
+      closeModal('recordFeeModal');
+      updateDashboard();
+      renderCurrentTab();
 
       btn.disabled = false;
       btn.innerHTML = '💚 Record Payment & Send WhatsApp';
@@ -2499,49 +2390,26 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="loading-spinner"></span> Adding...';
 
-      if (window.dataSdk) {
-        const result = await window.dataSdk.create({
-          type: 'teacher',
-          school_id: currentSchoolId,
-          teacher_id: teacherId,
-          teacher_name: teacherName,
-          monthly_salary: monthlySalary,
-          bank_account: bankAccount,
-          created_at: new Date().toISOString()
-        });
-
-        btn.disabled = false;
-        btn.innerHTML = 'Add Teacher';
-
-        if (result.isOk) {
-          showToast('Teacher added successfully!', 'success');
-          closeModal('addTeacherModal');
-        } else {
-          showToast('Failed to add teacher', 'error');
-        }
-      } else {
-        // Standalone mode
-        const newTeacher = {
-          __backendId: 'local_TCH_' + Date.now(),
-          type: 'teacher',
-          school_id: currentSchoolId,
-          teacher_id: teacherId,
-          teacher_name: teacherName,
-          monthly_salary: monthlySalary,
-          bank_account: bankAccount,
-          created_at: new Date().toISOString()
-        };
-        
-        allData.push(newTeacher);
-        
-        btn.disabled = false;
-        btn.innerHTML = 'Add Teacher';
-        
-        showToast('Teacher added successfully!', 'success');
-        closeModal('addTeacherModal');
-        updateDashboard();
-        renderCurrentTab();
-      }
+      const newTeacher = {
+        __backendId: 'local_TCH_' + Date.now(),
+        type: 'teacher',
+        school_id: currentSchoolId,
+        teacher_id: teacherId,
+        teacher_name: teacherName,
+        monthly_salary: monthlySalary,
+        bank_account: bankAccount,
+        created_at: new Date().toISOString()
+      };
+      
+      allData.push(newTeacher);
+      
+      btn.disabled = false;
+      btn.innerHTML = 'Add Teacher';
+      
+      showToast('Teacher added successfully!', 'success');
+      closeModal('addTeacherModal');
+      updateDashboard();
+      renderCurrentTab();
     }
 
     async function submitSalary() {
@@ -2576,66 +2444,38 @@
 
       const receiptNumber = `SAL${String(allData.filter(d => d.type === 'receipt' && d.payment_for === 'salary' && d.school_id === currentSchoolId).length + 1).padStart(5, '0')}`;
 
-      if (window.dataSdk) {
-        const result = await window.dataSdk.create({
-          type: 'receipt',
-          school_id: currentSchoolId,
-          receipt_number: receiptNumber,
-          payment_for: 'salary',
-          teacher_id: teacherId,
-          teacher_name: teacher.teacher_name,
-          payment_amount: amount,
-          payment_method: method,
-          payment_date: new Date().toISOString(),
-          whatsapp_sent: 'no',
-          created_at: new Date().toISOString()
-        });
-
-        btn.disabled = false;
-        btn.innerHTML = 'Pay Salary';
-
-        if (result.isOk) {
-          showToast('Salary paid successfully!', 'success');
-          closeModal('paySalaryModal');
-        } else {
-          showToast('Failed to pay salary', 'error');
-        }
-      } else {
-        // Standalone mode
-        const newReceipt = {
-          __backendId: 'local_SAL_' + Date.now(),
-          type: 'receipt',
-          school_id: currentSchoolId,
-          receipt_number: receiptNumber,
-          payment_for: 'salary',
-          teacher_id: teacherId,
-          teacher_name: teacher.teacher_name,
-          payment_amount: amount,
-          payment_method: method,
-          payment_date: new Date().toISOString(),
-          whatsapp_sent: 'no',
-          created_at: new Date().toISOString()
-        };
-        
-        allData.push(newReceipt);
-        
-        btn.disabled = false;
-        btn.innerHTML = 'Pay Salary';
-        
-        showToast('Salary paid successfully!', 'success');
-        closeModal('paySalaryModal');
-        updateDashboard();
-        renderCurrentTab();
-      }
+      const newReceipt = {
+        __backendId: 'local_SAL_' + Date.now(),
+        type: 'receipt',
+        school_id: currentSchoolId,
+        receipt_number: receiptNumber,
+        payment_for: 'salary',
+        teacher_id: teacherId,
+        teacher_name: teacher.teacher_name,
+        payment_amount: amount,
+        payment_method: method,
+        payment_date: new Date().toISOString(),
+        whatsapp_sent: 'no',
+        created_at: new Date().toISOString()
+      };
+      
+      allData.push(newReceipt);
+      
+      btn.disabled = false;
+      btn.innerHTML = 'Pay Salary';
+      
+      showToast('Salary paid successfully!', 'success');
+      closeModal('paySalaryModal');
+      updateDashboard();
+      renderCurrentTab();
     }
 
     function viewReceipt(receiptId) {
       const receipt = allData.find(d => d.__backendId === receiptId);
       if (!receipt) return;
 
-      const config = window.elementSdk.config;
-      const schoolName = config.school_name || defaultConfig.school_name;
-      const schoolPhone = config.school_phone || defaultConfig.school_phone;
+      const schoolName = currentSchool.school_name;
+      const schoolPhone = currentSchool.school_phone;
 
       const date = new Date(receipt.payment_date);
       const formattedDate = date.toLocaleDateString('en-GB');
@@ -2841,27 +2681,16 @@
     }
 
     async function confirmDeleteRecord(backendId) {
-      const record = allData.find(d => d.__backendId === backendId);
       document.body.querySelector('div[style*="z-index:3000"]')?.remove();
       
-      if (window.dataSdk) {
-        const result = await window.dataSdk.delete(record);
-        if (result.isOk) {
-          showToast('Record deleted successfully', 'success');
-        } else {
-          showToast('Failed to delete record', 'error');
-        }
+      const index = allData.findIndex(d => d.__backendId === backendId);
+      if (index > -1) {
+        allData.splice(index, 1);
+        showToast('Record deleted successfully', 'success');
+        updateDashboard();
+        renderCurrentTab();
       } else {
-        // Standalone mode
-        const index = allData.findIndex(d => d.__backendId === backendId);
-        if (index > -1) {
-          allData.splice(index, 1);
-          showToast('Record deleted successfully', 'success');
-          updateDashboard();
-          renderCurrentTab();
-        } else {
-          showToast('Failed to delete record', 'error');
-        }
+        showToast('Failed to delete record', 'error');
       }
     }
 
@@ -2900,8 +2729,7 @@
         return;
       }
 
-      const config = window.elementSdk.config;
-      const schoolName = config.school_name || defaultConfig.school_name;
+      const schoolName = currentSchool.school_name;
       const newPaid = parseFloat(student.amount_paid || 0) + parseFloat(amount);
       const balance = parseFloat(student.total_fees) - newPaid;
 
@@ -3069,5 +2897,5 @@
       document.addEventListener('DOMContentLoaded', initApp);
     }
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a700a8772ee9345',t:'MTc2NDU2NTQzOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a70178ca06b9345',t:'MTc2NDU2NTk3Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
